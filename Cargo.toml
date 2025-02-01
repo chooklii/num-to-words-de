@@ -2,6 +2,13 @@
 name = "num-to-words-de"
 version = "0.1.0"
 edition = "2021"
+license = "MIT OR Apache-2.0"
+description = "Convert a u32 Integer into its String equivalent in the German Language"
+repository = "https://github.com/chooklii/num-to-words-de"
+readme = "README.md"
+homepage = "https://bzenth.de"
+keywords = ["u32 to String", "German", "Integer to String"]
+categories = ["encoding", "internationalization"]
 
 [dependencies]
 regex = "1.11.1"

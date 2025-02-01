@@ -1,4 +1,4 @@
-use regex::Regex;
+use regex::{Captures, Regex};
 
 const BASE_NUMBERS: [&str; 20] = [
     "", "ein", "zwei", "drei", "vier", "fünf", "sechs", "sieben", "acht", "neun", "zehn", "elf",
@@ -8,7 +8,8 @@ const TENS: [&str; 10] = [
     "", "zehn", "zwanzig", "dreißig", "vierzig", "fünfzig", "sechzig", "siebzig", "achtzig",
     "neunzig",
 ];
-const ONE: &str = "eins";
+const EINS: &str = "eins";
+const EINE: &str = "eine";
 const HUNDRET: &str = "hundert";
 const THOUSEND: &str = "tausend";
 const MILLION_SINGLE: &str = "million";
@@ -31,8 +32,13 @@ pub enum Height {
 }
 
 fn base_numbers(input_number: u8, height: &Height) -> String{
-    if input_number == 1 && matches!(height,Height::NONE){
-        return String::from(ONE);
+    if input_number == 1{
+        if matches!(height,Height::NONE) {
+            return String::from(EINS);
+        }
+        if matches!(height, Height::MIL) || matches!(height, Height::MRD) {
+            return String::from(EINE)
+        }
     }
     String::from(BASE_NUMBERS[input_number as usize])
 }
@@ -74,7 +80,22 @@ pub fn sub_hundret_to_string(input_number: u8, height: &Height) -> String {
     }
 }
 
-pub fn split(input_number: u32) -> Vec<NumConstruct> {
+fn capture_to_split(captures: &Captures<'_>, start: usize, height: Height) -> NumConstruct{
+    if start == 0 {
+        return NumConstruct {
+            hundret: 0,
+            tens: captures.get(start +1).unwrap().as_str().parse::<u8>().unwrap(),
+            height
+        }
+    }
+    NumConstruct {
+        hundret: captures.get(start).unwrap().as_str().parse::<u8>().unwrap(),
+        tens: captures.get(start +1).unwrap().as_str().parse::<u8>().unwrap(),
+        height
+    }
+}
+
+fn split_into_num_construct(input_number: u32) -> Vec<NumConstruct> {
     // Add dummy Zeros to regex into correct fields from the back
     let mut reg_number = String::from("0000000000");
     reg_number.push_str(&input_number.to_string());
@@ -83,30 +104,10 @@ pub fn split(input_number: u32) -> Vec<NumConstruct> {
     let captures = re.captures(&reg_number).unwrap();
 
     let mut splits = Vec::new();
-    splits.push(NumConstruct {
-        hundret: 0,
-        tens: captures.get(1).unwrap().as_str().parse::<u8>().unwrap(),
-        height: Height::MRD,
-    });
-
-    splits.push(NumConstruct {
-        hundret: captures.get(2).unwrap().as_str().parse::<u8>().unwrap(),
-        tens: captures.get(3).unwrap().as_str().parse::<u8>().unwrap(),
-        height: Height::MIL,
-    });
-
-    splits.push(NumConstruct {
-        hundret: captures.get(4).unwrap().as_str().parse::<u8>().unwrap(),
-        tens: captures.get(5).unwrap().as_str().parse::<u8>().unwrap(),
-        height: Height::T,
-    });
-
-    splits.push(NumConstruct {
-        hundret: captures.get(6).unwrap().as_str().parse::<u8>().unwrap(),
-        tens: captures.get(7).unwrap().as_str().parse::<u8>().unwrap(),
-        height: Height::NONE,
-    });
-
+    splits.push(capture_to_split(&captures, 0, Height::MRD));
+    splits.push(capture_to_split(&captures, 2, Height::MIL));
+    splits.push(capture_to_split(&captures, 4, Height::T));
+    splits.push(capture_to_split(&captures, 6, Height::NONE));
     splits
 }
 
@@ -131,7 +132,7 @@ fn get_height_value(height: &Height, single: bool) -> &'static str {
     }
 }
 
-fn get_value(number: &NumConstruct) -> String {
+fn get_single_value_from_num_construct(number: &NumConstruct) -> String {
     let mut return_string = String::new();
 
     if number.hundret == 0 && number.tens == 0 {
@@ -148,14 +149,51 @@ fn get_value(number: &NumConstruct) -> String {
     return_string
 }
 
-fn main() {
-    let mut returnValue = String::new();
-    let number = 1001;
-    let number_split_to_party = split(number);
+fn num_to_value(input_number: u32) -> String{
+    let mut return_value = String::new();
+    let number_split_to_party = split_into_num_construct(input_number);
 
     for i in number_split_to_party.iter() {
-        returnValue.push_str(get_value(i).as_str());
+        return_value.push_str(get_single_value_from_num_construct(i).as_str());
+    } 
+    return_value
+}
+
+fn main() {
+    let number = 1001;
+    let result = num_to_value(number);
+    println!("Value {result}");
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::num_to_value;
+
+    struct InputAndResult{
+        input: u32,
+        result: String
     }
 
-    println!("Value {returnValue}");
+    #[test]
+    fn check_results(){
+        
+        let mut inputs: Vec<InputAndResult> = Vec::new();
+        inputs.push(InputAndResult{input: 1, result: String::from("eins")});
+        inputs.push(InputAndResult{input: 9, result: String::from("neun")});
+        inputs.push(InputAndResult{input: 12, result: String::from("zwölf")});
+        inputs.push(InputAndResult{input: 22, result: String::from("zweiundzwanzig")});
+        inputs.push(InputAndResult{input: 100, result: String::from("einhundert")});
+        inputs.push(InputAndResult{input: 434, result: String::from("vierhundertvierunddreißig")});
+        inputs.push(InputAndResult{input: 1001, result: String::from("eintausendeins")});
+        inputs.push(InputAndResult{input: 1111, result: String::from("eintausendeinhundertelf")});
+        inputs.push(InputAndResult{input: 20000, result: String::from("zwanzigtausend")});
+        inputs.push(InputAndResult{input: 300300, result: String::from("dreihunderttausenddreihundert")});
+        inputs.push(InputAndResult{input: 1300300, result: String::from("einemilliondreihunderttausenddreihundert")});
+        inputs.push(InputAndResult{input: 5300300, result: String::from("fünfmillionendreihunderttausenddreihundert")});
+
+        for input in inputs{
+            assert_eq!(input.result, num_to_value(input.input));
+        }
+
+    }
 }
