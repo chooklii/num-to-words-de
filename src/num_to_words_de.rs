@@ -149,7 +149,7 @@ fn get_single_value_from_num_construct(number: &NumConstruct) -> String {
     return_string
 }
 
-fn num_to_value(input_number: u32) -> String{
+pub fn num_to_word_de(input_number: u32) -> String{
     let mut return_value = String::new();
     let number_split_to_party = split_into_num_construct(input_number);
 
@@ -159,15 +159,8 @@ fn num_to_value(input_number: u32) -> String{
     return_value
 }
 
-fn main() {
-    let number = 1001;
-    let result = num_to_value(number);
-    println!("Value {result}");
-}
-
 #[cfg(test)]
 mod tests {
-    use crate::num_to_value;
 
     struct InputAndResult{
         input: u32,
@@ -176,7 +169,8 @@ mod tests {
 
     #[test]
     fn check_results(){
-        
+        use super::*;
+
         let mut inputs: Vec<InputAndResult> = Vec::new();
         inputs.push(InputAndResult{input: 1, result: String::from("eins")});
         inputs.push(InputAndResult{input: 9, result: String::from("neun")});
@@ -192,7 +186,7 @@ mod tests {
         inputs.push(InputAndResult{input: 5300300, result: String::from("fünfmillionendreihunderttausenddreihundert")});
 
         for input in inputs{
-            assert_eq!(input.result, num_to_value(input.input));
+            assert_eq!(input.result, num_to_word_de(input.input));
         }
 
     }
