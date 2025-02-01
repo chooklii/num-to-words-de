@@ -7,7 +7,7 @@ description = "Convert a u32 Integer into its String equivalent in the German La
 repository = "https://github.com/chooklii/num-to-words-de"
 readme = "README.md"
 homepage = "https://bzenth.de"
-keywords = ["u32 to String", "German", "Integer to String"]
+keywords = ["Integer", "convert", "deutsch", "String", "German"]
 categories = ["encoding", "internationalization"]
 
 [dependencies]
