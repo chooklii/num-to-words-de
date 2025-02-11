@@ -1,6 +1,6 @@
 [package]
 name = "num-to-words-de"
-version = "0.1.1"
+version = "0.1.2"
 edition = "2021"
 license = "MIT OR Apache-2.0"
 description = "Convert a u32 Integer into its String equivalent in the German Language"

@@ -149,6 +149,21 @@ fn get_single_value_from_num_construct(number: &NumConstruct) -> String {
     return_string
 }
 
+/// Converts a given u32 integer to its Number as a String in German Language
+///
+/// # Examples
+///
+/// ```
+///use num_to_words_de::num_to_word_de;
+///
+///let input_number: u32 = 101;
+///
+///let number_as_string: String = num_to_word_de(input_number);
+///
+///assert_eq!("einhunderteins", number_as_string);
+// Number: einhunderteins
+/// ```
+
 pub fn num_to_word_de(input_number: u32) -> String{
     let mut return_value = String::new();
     let number_split_to_party = split_into_num_construct(input_number);
