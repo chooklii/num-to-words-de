@@ -1,32 +1,99 @@
-<h1>num-to-words-de</h1>
+# num-to-words-de
 
-Convert a u32 Integer value to its String equivalent in the German Language
+🇬🇧 **English** | [🇩🇪 Deutsch](#deutsch)
 
-_Zahlen in den das entsprechende Zahlenwort der deutschen Sprache konvertieren_
+---
 
+Convert a `u32` integer to its written-out equivalent in the German language.
 
-```rust
-1 -> eins
-10 -> zehn
-13 -> dreizehn
-1000 -> eintausend
-12345 -> zwölftausenddreihundertvierundfünfzig
+## Examples
+
+```
+1       → eins
+10      → zehn
+13      → dreizehn
+1000    → eintausend
+12345   → zwölftausenddreihundertvierundfünfzig
 ```
 
-<h2>Usage</h2>
+## Installation
+
+Add to your `Cargo.toml`:
+
+```toml
+[dependencies]
+num-to-words-de = "0.1.2"
+```
+
+## Usage
 
 ```rust
 use num_to_words_de::num_to_word_de;
 
-let input_number: u32 = 101;
-
-let number_as_string: String = num_to_word_de(input_number);
-
-println!("Number: {number_as_string}");
-// Number: einhunderteins
-
+let result = num_to_word_de(101);
+println!("{result}"); // einhunderteins
 ```
 
-# Contributing
+## Supported Range
 
-If you are able to detect an issue feel free to create an issue. Please add the input value when doing so.
+Values from `0` to `4_294_967_295` (`u32::MAX`).
+
+Supports ones, tens, hundreds, thousands, millions (*Million/Millionen*), and billions (*Milliarde/Milliarden*).
+
+## License
+
+MIT
+
+## Contributing
+
+If you find an issue, feel free to open one on [GitHub](https://github.com/chooklii/num-to-words-de). Please include the input value that caused the problem.
+
+---
+
+<a id="deutsch"></a>
+
+# 🇩🇪 Deutsch
+
+Konvertiert eine `u32`-Ganzzahl in das entsprechende ausgeschriebene Zahlwort der deutschen Sprache.
+
+## Beispiele
+
+```
+1       → eins
+10      → zehn
+13      → dreizehn
+1000    → eintausend
+12345   → zwölftausenddreihundertvierundfünfzig
+```
+
+## Installation
+
+In der `Cargo.toml` hinzufügen:
+
+```toml
+[dependencies]
+num-to-words-de = "0.1.2"
+```
+
+## Verwendung
+
+```rust
+use num_to_words_de::num_to_word_de;
+
+let ergebnis = num_to_word_de(101);
+println!("{ergebnis}"); // einhunderteins
+```
+
+## Unterstützter Bereich
+
+Werte von `0` bis `4.294.967.295` (`u32::MAX`).
+
+Unterstützt Einer, Zehner, Hunderter, Tausender, Millionen und Milliarden.
+
+## Lizenz
+
+MIT
+
+## Mitwirken
+
+Falls dir ein Fehler auffällt, erstelle gerne ein Issue auf [GitHub](https://github.com/chooklii/num-to-words-de). Bitte gib den Eingabewert an, der das Problem verursacht hat.
